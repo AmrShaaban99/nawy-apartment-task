@@ -11,3 +11,10 @@ export const S3_CONFIG = {
   baseUrl: process.env.AWS_S3_BASE_URL || '', 
   imageFolder: process.env.AWS_S3_IMAGE_FOLDER || 'images', 
 };
+export const redisConfig = { 
+  host: process.env.REDIS_HOST || 'localhost',
+  port: Number(process.env.REDIS_PORT) || 6379, 
+  username: process.env.REDIS_USERNAME || '', 
+  password: process.env.REDIS_PASSWORD || '', 
+  db: Number(process.env.REDIS_DB) || 0, 
+};
