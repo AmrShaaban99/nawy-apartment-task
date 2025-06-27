@@ -18,3 +18,11 @@ export const redisConfig = {
   password: process.env.REDIS_PASSWORD || '', 
   db: Number(process.env.REDIS_DB) || 0, 
 };
+
+export const postgresConfig = {
+  host: process.env.POSTGRES_HOST || 'localhost',
+  port: Number(process.env.POSTGRES_PORT) || 5432,
+  username: process.env.POSTGRES_USER || 'your_db_user',
+  password: process.env.POSTGRES_PASSWORD || 'your_db_password',
+  database: process.env.POSTGRES_DB || 'your_db_name',
+};
