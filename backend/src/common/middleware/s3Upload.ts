@@ -1,12 +1,13 @@
-import multer from 'multer';
+import multer, { FileFilterCallback, MulterError } from 'multer';
 import multerS3 from 'multer-s3';
 import { S3_CONFIG } from '../../config/config';
-import { FileFilterCallback } from 'multer';
-import { Response, Request, NextFunction } from 'express';
+import { Response, Request, NextFunction, RequestHandler } from 'express';
 import { S3Client } from '@aws-sdk/client-s3';
-import { BadRequestError } from '../errors/http-errors'; // Adjust path as needed
-import { IUploadField } from '../interfaces/IuploadField'; // Adjust path as needed
+import { BadRequestError } from '../errors/http-errors';
+import { IUploadField } from "../interfaces/IUploadField";
+import path from 'path';
 
+// S3 client instance
 export const s3 = new S3Client({
   credentials: {
     accessKeyId: S3_CONFIG.accessKeyId,
@@ -15,50 +16,63 @@ export const s3 = new S3Client({
   region: S3_CONFIG.region,
 });
 
+// Default file size limit (2MB)
+const DEFAULT_MAX_SIZE = 2 * 1024 * 1024;
 
-// Set file size limit (e.g., 2MB)
-const MAX_SIZE = 2 * 1024 * 1024; // 2MB
-
-export function s3Upload(fields: IUploadField[]) {
-  // Build multer fields config
-  const multerFields = fields.map(f => ({
+// Helper: Build multer fields config
+const buildMulterFields = (fields: IUploadField[]) =>
+  fields.map(f => ({
     name: f.name,
     maxCount: f.maxCount || 1,
   }));
 
-  // Custom file filter per field
-  function fileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
+// Helper: File filter per field
+const createFileFilter = (fields: IUploadField[]) =>
+  (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     const field = fields.find(f => f.name === file.fieldname);
     const allowedExts = field?.supportedExtensions || ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-    const ext = file.originalname.split('.').pop()?.toLowerCase();
+    const ext = path.extname(file.originalname).replace('.', '').toLowerCase();
     if (ext && allowedExts.includes(ext)) {
       cb(null, true);
     } else {
-      cb(new Error(`Only [${allowedExts.join(', ')}] files are allowed for ${file.fieldname}`));
+      cb(new BadRequestError(`Only [${allowedExts.join(', ')}] files are allowed for ${file.fieldname}`));
     }
-  }
+  };
+
+// Helper: S3 storage config
+const createS3Storage = () =>
+  multerS3({
+    s3,
+    bucket: S3_CONFIG.bucket,
+    acl: 'public-read',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: (_req, file, cb) => {
+      cb(null, `${S3_CONFIG.imageFolder}/${Date.now()}-${file.originalname}`);
+    },
+  });
+
+// Main middleware factory
+export const s3Upload = (
+  fields: IUploadField[],
+  maxSize: number = DEFAULT_MAX_SIZE
+): RequestHandler => {
+  const multerFields = buildMulterFields(fields);
+  const fileFilter = createFileFilter(fields);
 
   const upload = multer({
-    storage: multerS3({
-      s3,
-      bucket: S3_CONFIG.bucket,
-      acl: 'public-read',
-      contentType: multerS3.AUTO_CONTENT_TYPE,
-      key: (_req, file, cb) => {
-        cb(null, `${S3_CONFIG.imageFolder}/${Date.now()}-${file.originalname}`);
-      },
-    }),
+    storage: createS3Storage(),
     fileFilter,
-    limits: { fileSize: MAX_SIZE },
+    limits: { fileSize: maxSize },
   });
 
   return (req: Request, res: Response, next: NextFunction) => {
-    upload.fields(multerFields)(req, res, function (err: any) {
-      if (err) {
-        // Wrap multer/S3 errors in your custom error
+    upload.fields(multerFields)(req, res, (err: any) => {
+      if (err instanceof MulterError) {
+        return next(new BadRequestError(`Upload error: ${err.message}`));
+      } else if (err) {
         return next(new BadRequestError(err.message || 'File upload failed'));
       }
       next();
     });
   };
-}
+};
