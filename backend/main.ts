@@ -2,6 +2,8 @@ import express from 'express';
 import morganMiddleware from './common/utils/logger/morganMiddleware';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { setupSwagger } from './common/utils/swagger'; // <-- Add this import
+import { customRateLimiter } from './common/middleware/rateLimiter';
+import { PORT } from './config/config';
 
 async function bootstrap (){
   const app = express();
@@ -9,16 +11,20 @@ async function bootstrap (){
   // Use the logger middleware for all requests
   app.use(morganMiddleware);   
 
-  const PORT = process.env.PORT || 3000;
   // Setup Swagger docs
-  setupSwagger(app); // <-- Add this line
+  setupSwagger(app);
 
 
-  // Register the error handler AFTER all routes
+  // Apply general rate limiter to all requests
+  app.use(customRateLimiter({ windowMs: 60000, max: 20 }));
+
+
+
   app.use(AllExceptionsFilter);
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
   });
 }
 

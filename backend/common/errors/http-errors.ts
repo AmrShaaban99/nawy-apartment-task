@@ -25,4 +25,10 @@ export class ConflictError extends HttpError {
   }
 }
 
+export class RateLimitError extends HttpError {
+  constructor(message = 'Too Many Requests') {
+    super(message, 429);
+  }
+}
+
 // Add more as needed...
