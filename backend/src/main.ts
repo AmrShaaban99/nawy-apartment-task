@@ -1,3 +1,4 @@
+import 'reflect-metadata'; // Required for tsyringe
 import express from 'express';
 import morganMiddleware from './common/utils/logger/morganMiddleware';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -5,10 +6,16 @@ import { setupSwagger } from './common/utils/swagger'; // <-- Add this import
 import { customRateLimiter } from './common/middleware/rateLimiter';
 import { PORT } from './config/config';
 import routes from './routes/routes';
-import hello from './routes/hello.route'; // <-- Import the hello route
+import hello from './routes/hello.route'; 
+import { AppDataSource } from './modules/dataSource'; 
+import { DependencyContainer } from './common/containers/dependency-container';
+
 
 async function bootstrap (){
   const app = express();
+  // Register DataSource for DI
+  await AppDataSource.initialize();
+  DependencyContainer.configure(); 
 
   // Use the logger middleware for all requests
   app.use(morganMiddleware);   
@@ -31,7 +38,7 @@ async function bootstrap (){
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+    console.log(`Swagger docs available at http://localhost:${PORT}/api`);
   });
 }
 
