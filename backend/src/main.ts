@@ -5,6 +5,7 @@ import { setupSwagger } from './common/utils/swagger'; // <-- Add this import
 import { customRateLimiter } from './common/middleware/rateLimiter';
 import { PORT } from './config/config';
 import routes from './routes/routes';
+import hello from './routes/hello.route'; // <-- Import the hello route
 
 async function bootstrap (){
   const app = express();
@@ -19,6 +20,9 @@ async function bootstrap (){
   // Apply general rate limiter to all requests
   app.use(customRateLimiter({ windowMs: 60000, max: 20 }));
 
+  // Parse JSON bodies
+  
+  app.use(hello);
   // Load routes
   routes(app);
 

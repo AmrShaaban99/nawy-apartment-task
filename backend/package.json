@@ -4,8 +4,8 @@
   "main": "main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node main.ts",
-    "dev": "nodemon --watch . --exec ts-node main.ts"
+    "start": "ts-node src/main.ts",
+    "dev": "nodemon --watch . --exec ts-node src/main.ts"
   },
   "keywords": [],
   "author": "",
