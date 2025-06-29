@@ -1,9 +1,7 @@
 import { CityService } from './city.service';
-import { CityDto } from './dtos/city.dto';
 import { Request, Response } from 'express';
 import { injectable } from 'tsyringe';
-//import { GetCityByCountryIdDto } from './dtos/getCityByCountryId.dto';
-import { GetCityByCountryIdDto } from './dtos/getCitybyCountryId.dto';
+import { GetCityByCountryIdDto } from './dtos/getCityByCountryId.dto';
 import { validate } from 'class-validator';
 
 @injectable()
@@ -58,11 +56,8 @@ export class CityController {
      *                 $ref: '#/components/schemas/CityDto'
      */
 findByCountryId = async (req: Request, res: Response) => {
-    // Validate request params using GetCityByCountryIdDto
     const dto = new GetCityByCountryIdDto();
     dto.countryId = req.params.countryId;
-    // Validate request params using class-validator
-    // Step 1: Validate the DTO
     validate(dto).then(errors => {
         if (errors.length > 0) {
             return res.status(400).json({ errors });

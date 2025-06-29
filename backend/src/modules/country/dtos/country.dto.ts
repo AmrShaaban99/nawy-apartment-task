@@ -1,4 +1,5 @@
-import { IsOptional } from 'class-validator';
+import { Expose } from 'class-transformer';
+import { IsOptional, IsString } from 'class-validator';
 /**
  * @swagger
  * components:
@@ -21,11 +22,27 @@ import { IsOptional } from 'class-validator';
  */
 export class CountryDto {
 
+  @Expose()
   @IsOptional()
-  id: string;
+  id?: string;
+
+  @Expose()
+  @IsString()
   name: string;
+
+  @Expose()
+  @IsString()
   iso: string;
+ 
+  @Expose()
+  @IsString()
   phoneCode: string;
+ 
+  @Expose()
+  @IsString()
   currency: string;
+ 
+  @Expose()
+  @IsString()
   region: string;
 }

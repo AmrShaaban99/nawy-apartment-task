@@ -1,8 +1,11 @@
 import { City } from './entities/city.entity';
 import { CityDto } from './dtos/city.dto';
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { CityRepository } from './city.repository';
 import { RedisCacheManager } from '../../common/cache/cacheManager';
+import { NotFoundError } from '../../common/errors/http-errors';
+import { plainToInstance } from 'class-transformer';
+import { ICache } from '../../common/interfaces/ICache';
 
 @injectable()
 export class CityService {
@@ -10,7 +13,7 @@ export class CityService {
   private readonly CACHE_TTL = 3600;
   constructor(
     private cityRepository: CityRepository,
-    private cache: RedisCacheManager
+     @inject('ICache') private cache: ICache
   ) {}
 
   async getAll(): Promise<CityDto[]> {
@@ -27,8 +30,13 @@ export class CityService {
     return cities;
   }
 
-  async getById(id: string): Promise<City | null> {
-    return this.cityRepository.getById(id);
+  async getById(id: string): Promise<CityDto> {
+     const city =await this.cityRepository.getById(id);;
+      if (!city) {
+          throw new NotFoundError(`City with ID ${id} not found`);;
+      }
+      const data = plainToInstance(CityDto, city,{excludeExtraneousValues: true});
+      return data
   }
 
   async getByCountryId(countryId: string): Promise<CityDto[]> {

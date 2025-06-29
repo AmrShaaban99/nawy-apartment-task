@@ -12,6 +12,7 @@
 import { IsString, IsUUID } from 'class-validator';
 
 export class GetCityByCountryIdDto {
+    
     @IsString()
     @IsUUID()
     countryId: string;

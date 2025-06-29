@@ -1,8 +1,8 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { CountryRepository } from './country.repository';
 import { CountryListItemDto } from './dtos/country-list.dto';
 import { CountryDto } from './dtos/country.dto';
-import { RedisCacheManager } from '../../common/cache/cacheManager';
+import { ICache } from '../../common/interfaces/ICache';
 
 @injectable()
 export class CountryService {
@@ -10,7 +10,7 @@ export class CountryService {
   private readonly CACHE_TTL = 3600; 
   constructor(
     private countryRepository: CountryRepository,
-    private cache: RedisCacheManager
+     @inject('ICache') private cache: ICache
   ) {}
 
 async getList(): Promise<CountryListItemDto[]> {
