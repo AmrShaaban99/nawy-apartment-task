@@ -29,9 +29,6 @@ async function bootstrap (){
   // Apply general rate limiter to all requests
   app.use(customRateLimiter({ windowMs: 60000, max: 20 }));
 
-  // Parse JSON bodies
-  
-  app.use(hello);
   // Load routes
   routes(app);
 
