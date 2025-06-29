@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const PORT = process.env.PORT || 3000;
+export const PORT = process.env.PORT || 5000;
 
 export const S3_CONFIG = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'default-access-key',

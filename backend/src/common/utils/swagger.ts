@@ -14,7 +14,7 @@ const swaggerOptions = {
     apis: ['**/*.ts'], // Scan all TypeScript files in the system
 };
 
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
+export const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 export function setupSwagger(app: Express) {
   app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
