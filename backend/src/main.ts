@@ -9,6 +9,8 @@ import routes from './routes/routes';
 import hello from './routes/hello.route'; 
 import { AppDataSource } from './modules/dataSource'; 
 import { DependencyContainer } from './common/containers/dependency-container';
+import cors from 'cors';
+
 
 
 async function bootstrap (){
@@ -23,7 +25,7 @@ async function bootstrap (){
   // Setup Swagger docs
   setupSwagger(app);
 
-
+  app.use(cors());
   // Apply general rate limiter to all requests
   app.use(customRateLimiter({ windowMs: 60000, max: 20 }));
 
