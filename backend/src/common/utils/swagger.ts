@@ -11,7 +11,11 @@ const swaggerOptions = {
             description: 'API documentation for Nawy Apartment Task',
         },
     },
-    apis: ['**/*.ts'], // Scan all TypeScript files in the system
+    apis: [
+        process.env.NODE_ENV === 'production'
+            ? './dist/**/*.js'
+            : './src/**/*.ts'
+    ],
 };
 
 export const swaggerSpec = swaggerJSDoc(swaggerOptions);

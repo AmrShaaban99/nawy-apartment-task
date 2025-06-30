@@ -1,8 +1,8 @@
 import { Express } from 'express';
 import countryModule from '../modules/country/country.module';
 import cityModule from '../modules/city/city.module';
-import areaModule from '../modules/area/area.module'; // Assuming you have an area module
-import apartmentModule from '../modules/apartment/apartment.module'; // Assuming you have an apartment module
+import areaModule from '../modules/area/area.module'; 
+import apartmentModule from '../modules/apartment/apartment.module'; 
 import { swaggerSpec } from '../common/utils/swagger';
 
 export default (app: Express) => {
@@ -20,5 +20,4 @@ export default (app: Express) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
   });
-  // Add other module routers here
 };
