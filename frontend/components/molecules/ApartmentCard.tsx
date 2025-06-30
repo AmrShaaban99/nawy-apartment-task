@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Apartment } from '@/types/apartment';
+import { Apartment } from '@/app/apartments/types/apartment';
 
 interface ApartmentCardProps {
   apartment: Apartment;
@@ -27,15 +27,17 @@ export function ApartmentCard({ apartment }: ApartmentCardProps) {
           />
         </div>
         <div className="font-bold text-lg">{apartment.title}</div>
-        <div className="text-sm text-gray-600">
-          Area: {apartment.areaId}
+        <div className="flex items-center justify-between text-sm text-gray-700">
+          <span className="font-semibold">Price:</span>
+          <span className="text-green-700 font-bold">{apartment.price}</span>
         </div>
-        <div className="text-sm text-gray-600">
-          Price: {apartment.price}
-        </div>
-        <div className="text-xs text-gray-400">
-          Rooms: {apartment.numberOfRooms} | Baths:{' '}
-          {apartment.numberOfBathrooms} | Size: {apartment.sizeInSquareMeters}m²
+        <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+          <span>
+            <span className="font-medium">Rooms:</span> {apartment.numberOfRooms}
+          </span>
+          <span>
+            <span className="font-medium">Baths:</span> {apartment.numberOfBathrooms}
+          </span>
         </div>
       </div>
     </Link>

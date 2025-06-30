@@ -3,32 +3,24 @@
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useApartmentContext } from '@/contexts/ApartmentContext';
 
-interface PaginationControlsProps {
+export interface PaginationControlsProps {
   total: number;
   page: number;
   limit: number;
+  onPageChange: (page: number) => void;
 }
 
-export function PaginationControls({ total, page, limit }: PaginationControlsProps) {
-  const { dispatch } = useApartmentContext();
-  
+export function PaginationControls({ total, page, limit, onPageChange }: PaginationControlsProps) {
   const totalPages = Math.ceil(total / limit);
-  const startItem = (page - 1) * limit + 1;
-  const endItem = Math.min(page * limit, total);
-
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      dispatch({ type: 'SET_PAGE', payload: newPage });
+      onPageChange(newPage);
       // Scroll to top of results
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -36,17 +28,13 @@ export function PaginationControls({ total, page, limit }: PaginationControlsPro
 
   const generatePageNumbers = () => {
     const maxVisiblePages = 5;
-    
-    // Calculate which group of 5 pages we're in
     const currentGroup = Math.ceil(page / maxVisiblePages);
     const startPage = (currentGroup - 1) * maxVisiblePages + 1;
     const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
-    
     const pages = [];
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
-    
     return {
       pages,
       hasNextGroup: endPage < totalPages,
@@ -66,7 +54,6 @@ export function PaginationControls({ total, page, limit }: PaginationControlsPro
     handlePageChange(prevGroupEnd);
   };
 
-  // Don't show pagination if there's only one page
   if (totalPages <= 1) {
     return null;
   }
@@ -74,18 +61,8 @@ export function PaginationControls({ total, page, limit }: PaginationControlsPro
   const { pages, hasNextGroup, hasPrevGroup } = generatePageNumbers();
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-stone-200/50 rounded-3xl shadow-xl p-10">
+    <div className="bg-white/80 backdrop-blur-sm border border-stone-200/50 rounded-3xl shadow-xl p-12">
       <div className="space-y-8">
-        {/* Results Summary */}
-        <div className="text-center">
-          <div className="text-2xl font-light text-stone-800 mb-3">
-            Showing {startItem}-{endItem} of {total} apartments
-          </div>
-          <div className="text-sm text-stone-500 font-medium">
-            Page {page} of {totalPages}
-          </div>
-        </div>
-
         {/* Main Pagination */}
         <div className="flex justify-center">
           <Pagination>
@@ -120,18 +97,6 @@ export function PaginationControls({ total, page, limit }: PaginationControlsPro
                 </PaginationItem>
               )}
 
-              {/* Previous Page */}
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => handlePageChange(page - 1)}
-                  className={`${
-                    page === 1 
-                      ? 'pointer-events-none opacity-50' 
-                      : 'cursor-pointer hover:bg-stone-50 hover:text-stone-700 transition-colors'
-                  } px-5 py-3 h-12 border-stone-200 rounded-xl`}
-                />
-              </PaginationItem>
-              
               {/* Page Numbers (Max 5) */}
               {pages.map((pageNum) => (
                 <PaginationItem key={pageNum}>
@@ -149,17 +114,6 @@ export function PaginationControls({ total, page, limit }: PaginationControlsPro
                 </PaginationItem>
               ))}
               
-              {/* Next Page */}
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={() => handlePageChange(page + 1)}
-                  className={`${
-                    page === totalPages 
-                      ? 'pointer-events-none opacity-50' 
-                      : 'cursor-pointer hover:bg-stone-50 hover:text-stone-700 transition-colors'
-                  } px-5 py-3 h-12 border-stone-200 rounded-xl`}
-                />
-              </PaginationItem>
 
               {/* Next Group Button */}
               {hasNextGroup && (

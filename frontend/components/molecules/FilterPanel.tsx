@@ -1,55 +1,41 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useApartmentContext } from '@/contexts/ApartmentContext';
+import { ApartmentState } from '@/app/apartments/types/apartment';
+import { useState } from 'react';
 
+interface Props {
+  readonly filters: ApartmentState;
+  readonly onSearchClick: (filters: ApartmentState) => void;
+}
 
-export function FilterPanel() {
-  const { state, dispatch } = useApartmentContext();
-  const [localFilters, setLocalFilters] = useState(state.filters);
+export function FilterPanel({filters,onSearchClick}: Props) {
 
-  const handleApplyFilters = () => {
-    dispatch({ type: 'SET_FILTERS', payload: localFilters });
-  };
-
-  const handleResetFilters = () => {
-    const resetFilters = {
-      search: '',
-      areaId: undefined,
-      minPrice: undefined,
-      maxPrice: undefined,
-    };
-    setLocalFilters(resetFilters);
-    dispatch({ type: 'RESET_FILTERS' });
-  };
-
+  const [apartmentFilters,setApartmentFilters]= useState<ApartmentState>({filters:filters.filters, sortBy: filters.sortBy, sortOrder: filters.sortOrder});
   return (
-    <div className="w-full p-4 bg-white rounded shadow flex flex-col gap-4">
-      <div className="flex gap-4 flex-wrap">
-        <Input
-          placeholder="Search..."
-          value={localFilters.search}
-          onChange={e => setLocalFilters({ ...localFilters, search: e.target.value })}
-        />
-        {/* Area select removed: replace with static or API-driven options as needed */}
-        <Input
-          type="number"
-          placeholder="Min Price"
-          value={localFilters.minPrice || ''}
-          onChange={e => setLocalFilters({ ...localFilters, minPrice: e.target.value ? Number(e.target.value) : undefined })}
-        />
-        <Input
-          type="number"
-          placeholder="Max Price"
-          value={localFilters.maxPrice || ''}
-          onChange={e => setLocalFilters({ ...localFilters, maxPrice: e.target.value ? Number(e.target.value) : undefined })}
-        />
-      </div>
-      <div className="flex gap-4">
-        <Button onClick={handleApplyFilters} className="bg-stone-700 text-white rounded h-10 font-medium">Apply</Button>
-        <Button onClick={handleResetFilters} variant="outline" className="border-stone-300 text-stone-700 rounded h-10 font-medium">Reset</Button>
+    <div className="w-full p-6 bg-white rounded shadow flex flex-col gap-4">
+      <div className="flex gap-4 flex-wrap items-center">
+        <div className="flex-1 min-w-0 grid grid-cols-6 gap-4 w-full">
+          <Input
+            placeholder="Search..."
+            value={apartmentFilters.filters.search}
+            onChange={e => setApartmentFilters({ 
+              ...apartmentFilters, 
+              filters: { 
+          ...apartmentFilters.filters, 
+          search: e.target.value || '' 
+              } 
+            })}
+            className="col-span-4 focus:outline-none"
+          />
+          <Button 
+            onClick={()=>{onSearchClick(apartmentFilters)}} 
+            className="col-span-2 bg-stone-700 text-white rounded h-10 font-medium"
+          >
+            Apply
+          </Button>
+        </div>
       </div>
     </div>
   );
