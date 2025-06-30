@@ -6,8 +6,7 @@ import { setupSwagger } from './common/utils/swagger'; // <-- Add this import
 import { customRateLimiter } from './common/middleware/rateLimiter';
 import { PORT } from './config/config';
 import routes from './routes/routes';
-import hello from './routes/hello.route'; 
-import { AppDataSource } from './modules/dataSource'; 
+import { AppDataSource } from './config/dataSource'; 
 import { DependencyContainer } from './common/containers/dependency-container';
 import cors from 'cors';
 
