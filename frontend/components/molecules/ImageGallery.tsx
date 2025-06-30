@@ -1,15 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+// Helper to get the correct image URL
+function getImageUrl(url: string): string {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '';
+  // Ensure no double slashes
+  return backendUrl.replace(/\/$/, '') + '/' + url.replace(/^\//, '');
+}
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ApartmentMedia } from '@/types/apartment';
-import { cn } from '@/lib/utils';
-
 interface ImageGalleryProps {
-  media: ApartmentMedia[];
+  media: string[];
   title: string;
 }
 
@@ -19,7 +26,7 @@ export function ImageGallery({ media, title }: ImageGalleryProps) {
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
   // Filter only images
-  const images = media.filter(m => m.type === 'image');
+  const images = media;
 
   const nextImage = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -56,8 +63,8 @@ export function ImageGallery({ media, title }: ImageGalleryProps) {
         <div className="relative aspect-[16/9] rounded-lg overflow-hidden group cursor-pointer">
           {!imageErrors.has(currentIndex) ? (
             <Image
-              src={images[currentIndex].url}
-              alt={images[currentIndex].caption || `${title} - Image ${currentIndex + 1}`}
+              src={getImageUrl(images[currentIndex])}
+              alt={`${title} - Image ${currentIndex + 1}`}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               onClick={() => openModal(currentIndex)}
@@ -104,17 +111,10 @@ export function ImageGallery({ media, title }: ImageGalleryProps) {
           <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
             {currentIndex + 1} / {images.length}
           </div>
-
-          {/* Caption */}
-          {images[currentIndex].caption && (
-            <div className="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm max-w-xs truncate">
-              {images[currentIndex].caption}
-            </div>
-          )}
         </div>
 
         {/* Thumbnail Grid */}
-        {images.length > 1 && (
+        {/* {images.length > 1 && (
           <div className="grid grid-cols-4 gap-2">
             {images.slice(0, 4).map((image, index) => (
               <div
@@ -129,8 +129,8 @@ export function ImageGallery({ media, title }: ImageGalleryProps) {
               >
                 {!imageErrors.has(index) ? (
                   <Image
-                    src={image.url}
-                    alt={image.caption || `${title} - Thumbnail ${index + 1}`}
+                    src={image}
+                    alt={`${title} - Thumbnail ${index + 1}`}
                     fill
                     className="object-cover"
                     onError={() => handleImageError(index)}
@@ -148,7 +148,7 @@ export function ImageGallery({ media, title }: ImageGalleryProps) {
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Modal */}
@@ -157,8 +157,8 @@ export function ImageGallery({ media, title }: ImageGalleryProps) {
           <div className="relative w-full h-full">
             {!imageErrors.has(currentIndex) ? (
               <Image
-                src={images[currentIndex].url}
-                alt={images[currentIndex].caption || `${title} - Image ${currentIndex + 1}`}
+                src={getImageUrl(images[currentIndex])}
+                alt={`${title} - Image ${currentIndex + 1}`}
                 fill
                 className="object-contain"
                 onError={() => handleImageError(currentIndex)}
@@ -197,9 +197,6 @@ export function ImageGallery({ media, title }: ImageGalleryProps) {
             {/* Modal Counter and Caption */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-center">
               <div>{currentIndex + 1} / {images.length}</div>
-              {images[currentIndex].caption && (
-                <div className="text-sm mt-1">{images[currentIndex].caption}</div>
-              )}
             </div>
           </div>
         </DialogContent>
