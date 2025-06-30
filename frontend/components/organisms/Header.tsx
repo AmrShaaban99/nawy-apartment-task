@@ -10,10 +10,10 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/apartments" className="flex items-center space-x-2">
-            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="h-8 w-8 bg-zinc-700  rounded-lg flex items-center justify-center">
               <Building className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">ApartmentFinder</span>
+            <span className="text-xl font-bold text-gray-900">Apartments</span>
           </Link>
 
           {/* Simple Navigation */}
@@ -22,7 +22,7 @@ export function Header() {
               href="/apartments"
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
-              Browse Apartments
+            Apartments
             </Link>
           </nav>
         </div>
