@@ -1,4 +1,4 @@
-import { AppDataSource } from '../dataSource';
+import { AppDataSource } from '../../config/dataSource';
 import { Area } from './entities/area.entity';
 import { City } from '../city/entities/city.entity';
 import { NotFoundError } from '../../common/errors/http-errors';
@@ -108,8 +108,6 @@ const manualAreas = [
 ];
 
 export const seedAreas = async () => {
-  await AppDataSource.initialize();
-  await AppDataSource.runMigrations();
   const areaRepo = AppDataSource.getRepository(Area);
   const cityRepo = AppDataSource.getRepository(City);
 
@@ -141,10 +139,4 @@ export const seedAreas = async () => {
   await areaRepo.save(areaEntities.filter((entity): entity is Area => entity !== null));
 
   console.log('Areas seeded');
-  process.exit(0);
 };
-
-seedAreas().catch(error => {
-  console.error('Area seed failed', error);
-  process.exit(1);
-});

@@ -17,9 +17,9 @@ export interface CreateApartmentData {
   longitude?: number;
   latitude?: number;
   streetName?: string;
-  areaId: string; // Assuming areaId is a UUID
-  status?: ApartmentStatusEnum; // Default to AVAILABLE if not provided
+  areaId: string; 
+  status?: ApartmentStatusEnum; 
   streetNumber?: string;
-  isActive?: boolean; // Default to true if not provided
+  isActive?: boolean; 
   media?:string[];
 }

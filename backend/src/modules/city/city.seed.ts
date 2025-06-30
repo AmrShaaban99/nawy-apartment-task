@@ -1,5 +1,5 @@
 // 1. Import dependencies and define types
-import { AppDataSource } from '../dataSource';
+import { AppDataSource } from '../../config/dataSource';
 import { City } from './entities/city.entity';
 import { Country } from '../country/entities/country.entity';
 import { NotFoundError } from '../../common/errors/http-errors';
@@ -58,9 +58,6 @@ const manualCities = [
 ];
 
 export const seedCities = async () => {
-  await AppDataSource.initialize();
-  await AppDataSource.runMigrations();
-
   const cityRepo = AppDataSource.getRepository(City);
   
   const countryRepo = AppDataSource.getRepository(Country);
@@ -91,10 +88,4 @@ export const seedCities = async () => {
   await cityRepo.save(cityEntities.filter((entity): entity is City => entity !== null));
 
   console.log('Cities seeded');
-  process.exit(0);
 };
-
-seedCities().catch(error => {
-  console.error('City seed failed', error);
-  process.exit(1);
-});

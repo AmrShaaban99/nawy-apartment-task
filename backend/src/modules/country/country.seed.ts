@@ -1,5 +1,5 @@
 // 1. Import dependencies and define types
-import { AppDataSource } from '../dataSource';
+import { AppDataSource } from '../../config/dataSource';
 import { Country } from './entities/country.entity';
 
 // Manual country data array
@@ -18,9 +18,6 @@ const manualCountries = [
 ];
 
 export const seedCountries = async () => {
-  await AppDataSource.initialize();
-  await AppDataSource.runMigrations();
-
   const countryRepo = AppDataSource.getRepository(Country);
   const count = await countryRepo.count();
     if (count > 0) {
@@ -40,10 +37,4 @@ export const seedCountries = async () => {
   await countryRepo.save(countryEntities);
 
   console.log(' Countries seeded');
-  process.exit(0);
 };
-
-seedCountries().catch(error => {
-  console.error('Country seed failed', error);
-  process.exit(1);
-});
