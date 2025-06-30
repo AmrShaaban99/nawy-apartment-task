@@ -11,7 +11,7 @@ export default class ApartmentRouter {
   }
 
   private initializeRoutes() {
-    this.router.get('/filter', this.apartmentController.findAll);
+    this.router.get('/', this.apartmentController.findAll);
     this.router.get('/:id', this.apartmentController.findById);
     this.router.post(
       '/',

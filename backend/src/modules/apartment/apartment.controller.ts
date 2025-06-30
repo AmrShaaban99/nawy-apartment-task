@@ -50,10 +50,14 @@ export class ApartmentController {
       console.log('Validation errors:', errors);
       throw new BadRequestError('Invalid request data');
     }
-
-    const filesObj = req.files as { [fieldname: string]: (Express.Multer.File & { location?: string })[] };
-    if (filesObj?.['media']?.length > 0) {
-      dto.media = filesObj?.['media']?.map(f => f.location!).filter(Boolean) || [];
+    // Ensure req.files is always an object
+    const filesObj = (req.files || {}) as { [fieldname: string]: (Express.Multer.File & { location?: string })[] };
+    // Always set dto.media to an array (empty if no files)
+    dto.media = [];
+    if (filesObj['media'] && Array.isArray(filesObj['media'])) {
+      const mediaUrls = filesObj['media'].map(f => f.location).filter((url): url is string => Boolean(url));
+      dto.media = mediaUrls;
+      console.log('Files received:', mediaUrls);
     }
 
     const apartment = await this.apartmentService.createApartmentWithMedia(dto);
@@ -63,7 +67,7 @@ export class ApartmentController {
 
   /**
    * @swagger
-   * /apartments/filter:
+   * /apartments:
    *   get:
    *     summary: Filter apartments (lightweight list)
    *     tags:

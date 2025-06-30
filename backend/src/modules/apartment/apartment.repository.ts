@@ -43,8 +43,9 @@ export class ApartmentRepository {
 
             if (mediaData && Array.isArray(mediaData) && mediaData.length > 0) {
                 const apartmentMedia = mediaData.map((media: any) => {
+                    console.log('Media data:', media);
                     return queryRunner.manager.create(ApartmentMedia, {
-                        ...media,
+                        url: media,
                         apartment: savedApartment
                     });
                 });
@@ -92,7 +93,6 @@ export class ApartmentRepository {
         const order: any = {};
         order[sortField] = sortOrder.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
-        // Use TypeORM find with select and relations, then map result
         const [apartments, total] = await this.repo.findAndCount({
             where,
             skip: (page - 1) * limit,
