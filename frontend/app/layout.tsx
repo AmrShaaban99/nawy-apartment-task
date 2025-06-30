@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ApartmentProvider } from '@/contexts/ApartmentContext';
 import { Header } from '@/components/organisms/Header';
 import QueryProvider from './providers/QueryProvider';
+import Footer from '@/components/organisms/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
           <ApartmentProvider>
             <Header />
             <main>{children}</main>
+            <Footer/>
           </ApartmentProvider>
         </QueryProvider>
       </body>

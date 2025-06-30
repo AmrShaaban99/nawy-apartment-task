@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { ApartmentFilters } from '@/types/apartment';
+import { ApartmentFilters } from '@/app/apartments/types/apartment';
 
 interface ApartmentState {
   filters: ApartmentFilters;
